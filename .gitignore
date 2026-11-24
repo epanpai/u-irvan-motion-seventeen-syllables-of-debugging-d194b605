@@ -1,0 +1,7 @@
+# kit + build artefacts (local only, never committed)
+u-irvan-motion-seventeen-syllables-of-debugging-d194b605-kit/
+kit.tar.gz
+comp-haiku.json
+out/
+transcripts.tar.gz
+BUILD_LOG.md
