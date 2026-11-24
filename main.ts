@@ -52,15 +52,23 @@ const countSyllables = (line: string): number =>
       const groups = w.replace(/e$/, '').match(/[aeiouy]+/g);
       return n + Math.max(1, groups ? groups.length : 1);
     }, 0);
+// Report the count per line, so a bad edit fails with the exact line and
+// count instead of a bare gate error; also refuse blank lines and
+// trailing spaces, which the gate's "not only white space" wording
+// would otherwise let through unnoticed.
+const counted = lines.map(countSyllables);
 if (
   HAIKU.length < 1 ||
   HAIKU.length > 200 ||
   !HAIKU.trim() ||
   lines.length !== 3 ||
   HAIKU.endsWith('\n') ||
-  !lines.every((line, i) => countSyllables(line) === syllables[i])
+  lines.some((line) => !line.trim() || line !== line.trimEnd()) ||
+  !lines.every((line, i) => counted[i] === syllables[i])
 ) {
-  throw new Error(`entry violates the gate: ${JSON.stringify(HAIKU)}`);
+  throw new Error(
+    `entry violates the gate: ${JSON.stringify(HAIKU)} (syllables ${counted.join('-')}, want ${syllables.join('-')})`,
+  );
 }
 
 mkdirSync(out, { recursive: true });
